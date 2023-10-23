@@ -10,15 +10,15 @@ import Library.Tactic.Addarith
 import Library.Tactic.Cancel
 import Library.Tactic.Use
 
-example (P : α → β → Prop) : (∃ x y, P x y) ↔ ∃ y x, P x y := by
-  constructor
-  . intro h
-    obtain ⟨x, y,
-    tempab⟩ := h
-    use y; use x; apply tempab
-  . intro h
-    obtain ⟨x, y,
-    tempab⟩ := h
-    use y; use x; apply tempab
-    
-     
+theorem problem4b (P : α → β → Prop) : (∃ x y, P x y) ↔ ∃ y x, P x y := by
+  constructor 
+  · intros h 
+    obtain ⟨x,y,hxy⟩ := h 
+    use y 
+    use x 
+    apply hxy 
+  · intros h 
+    obtain ⟨y,x,hyx⟩ := h 
+    use x 
+    use y 
+    apply hyx
