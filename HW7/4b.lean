@@ -10,7 +10,7 @@ import Library.Tactic.Addarith
 import Library.Tactic.Cancel
 import Library.Tactic.Use
 
-theorem problem4b (P Q : Prop) : ¬ (P → Q) ↔ (P ∧ ¬ Q) := by
+example (P Q : Prop) : ¬ (P → Q) ↔ (P ∧ ¬ Q) := by
   constructor
   · intros h1
     by_cases P ∧ ¬Q
