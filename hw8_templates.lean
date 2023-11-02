@@ -1,0 +1,84 @@
+import Mathlib.Data.Real.Basic
+import Mathlib.Tactic.IntervalCases
+import Library.Theory.Comparison
+import Library.Theory.Parity
+import Library.Theory.Prime
+import Library.Tactic.ModCases
+import Library.Tactic.Extra
+import Library.Tactic.Numbers
+import Library.Tactic.Addarith
+import Library.Tactic.Cancel
+import Library.Tactic.Use
+import Library.Tactic.Induction
+
+
+notation3 (prettyPrint := false) "forall_sufficiently_large "(...)", "r:(scoped P => ∃ C, ∀ x ≥ C, P x) => r
+attribute [-instance] Int.instDivInt_1 Int.instDivInt EuclideanDomain.instDiv Nat.instDivNat
+
+/- 2 points -/
+theorem problem4a {a b d : ℤ} (h : a ≡ b [ZMOD d]) (n : ℕ) : a ^ n ≡ b ^ n [ZMOD d] := by
+  simple_induction n with k IH
+  . ring
+    extra
+  . calc
+      a ^ (k + 1) ≡ b ^ (k + 1) [ZMOD d] := by { rel [h, IH]}
+
+/- 3 points -/
+theorem problem4b : forall_sufficiently_large n : ℕ, 2 ^ n ≥ n ^ 2 := by
+  dsimp
+  use 4
+  intro n hn
+  induction_from_starting_point n, hn with k hk IH
+  · numbers
+  · calc
+      2^(k+1) = 2*2^k := by ring
+      _ ≥ 2*k^2 := by rel[IH]
+      _ = k^2 + k*k := by ring
+      _ ≥ k^2 + 4*k := by rel [hk]
+      _ = k^2 + 2*k + 2*k := by ring
+      _ ≥ k^2 + 2*k + 2*4 := by rel [hk]
+      _ = (k+1)^2 + 7 := by ring
+      _ ≥ (k+1)^2 := by extra
+
+/- 2 points -/
+theorem problem4c {a : ℝ} (ha : -1 ≤ a) (n : ℕ) : (1 + a) ^ n ≥ 1 + n * a := by
+  simple_induction n with k IH
+  . simp
+  . have pos_a : 0 ≤ 1+a := by addarith [ha]
+    have h_exp : (1 + a)^(k+1) = (1 + a) * (1 + a)^k := by ring
+    have h_rel : (1 + a) * (1 + a)^k ≥ (1 + a) * (1 + k * a) := by rel [IH]
+    calc
+      (1 + a)^(k+1) = (1 + a) * (1 + a)^k := h_exp
+      _ ≥ (1 + a) * (1 + k * a) := h_rel
+      _ = 1 + (k + 1) * a + k * a^2 := by ring
+      _ ≥ 1 + (k + 1) * a := by extra
+
+/- 3 points -/
+theorem problem4d : forall_sufficiently_large n : ℕ, (3:ℤ) ^ n ≥ 2 ^ n + 100 := by
+  dsimp
+  use 5
+  intro n hn
+  induction_from_starting_point n, hn with k hk IH
+  · numbers
+  · have h_exp : (3:ℤ)^(k+1) = 2*(3^k) + (3^k) := by ring
+    have h_ineq : (2:ℤ)^k + 100 ≤ 3^k := by extra
+    have h_bound : 2*(3^k) ≥ 2 * ((2:ℤ)^k + 100) := by rel [IH, h_ineq]
+    calc
+      (3:ℤ)^(k+1) = 2*(3^k) + (3^k) := h_exp
+      _ ≥ 2*(3^k) := by extra
+      _ ≥ 2 * ((2:ℤ)^k + 100) := h_bound
+      _ = (2:ℤ)^(k+1) + 100+100 := by ring
+      _ ≥ (2:ℤ)^(k+1) + 100 := by extra
+
+/- 5 points -/
+def foo : ℕ → ℕ
+  | 0     => 1
+  | n + 1 => foo (n) + 2 * n + 3
+/- 5 points -/
+theorem problem5b {n : ℕ} : ∃ (k : ℕ), foo (n) = k ^ 2 := by
+  use n+1
+  simple_induction n with h IN
+  . simp [foo]
+  . have h_expr : foo (h + 1) = foo h + 2 * h + 3 := by simp [foo]
+    rw [h_expr, IN]
+    ring
