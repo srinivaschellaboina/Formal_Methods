@@ -3,7 +3,6 @@ import Mathlib.Tactic.IntervalCases
 import Library.Theory.Comparison
 import Library.Theory.Parity
 import Library.Theory.Prime
-import Library.Tactic.Rel
 import Library.Tactic.ModCases
 import Library.Tactic.Extra
 import Library.Tactic.Numbers
@@ -11,7 +10,7 @@ import Library.Tactic.Addarith
 import Library.Tactic.Cancel
 import Library.Tactic.Use
 
-theorem problem4a : ¬ (∃ n : ℕ, n ^ 2 = 2) := by
+example : ¬ (∃ n : ℕ, n ^ 2 = 2) := by
   push_neg
   intro n
   have hn := le_or_succ_le n 1
