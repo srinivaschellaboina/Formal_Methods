@@ -10,13 +10,12 @@ import Library.Tactic.Addarith
 import Library.Tactic.Cancel
 import Library.Tactic.Use
 
+attribute [-instance] Int.instDivInt_1 Int.instDivInt EuclideanDomain.instDiv Nat.instDivNat
+set_option push_neg.use_distrib true
+
 example {p : ℕ} (k : ℕ) (hk1 : k ≠ 1) (hkp : k ≠ p) (hk : k ∣ p) : ¬ Prime p := by
   dsimp [Prime]
   push_neg
-  intro h
+  right
   use k
-  constructor
-  . apply hk
-  . constructor
-    . apply hk1
-    . apply hkp
+  apply And.intro hk (And.intro hk1 hkp)
