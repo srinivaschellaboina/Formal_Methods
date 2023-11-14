@@ -12,24 +12,18 @@ import Library.Tactic.Use
 
 example {p : ℕ} (hp : 2 ≤ p) (H : ∀ m : ℕ, 1 < m → m < p → ¬m ∣ p) : Prime p := by
   constructor
-  · apply hp 
+  · apply hp -- show that `2 ≤ p`
   intro m hmp
   have hp' : 0 < p := by extra
   have h1m : 1 ≤ m := Nat.pos_of_dvd_of_pos hmp hp'
   obtain hm | hm_left : 1 = m ∨ 1 < m := eq_or_lt_of_le h1m
-  · ---for `m = 1`
+  · -- the case `m = 1`
     left
     addarith [hm]
-  ---for `1 < m`
-  . have h2:= H m 
-    have h3 := h2 hm_left
-    have h4 : m ≤ p := by
-      apply Nat.le_of_dvd
-      extra
-      exact hmp
-    obtain h6 | h7 : m = p ∨ m < p := eq_or_lt_of_le h4
-    right
-    exact h6
-    
-    have h5 := h3 h7
-    contradiction
+  · -- the case `1 < m`
+    right 
+    have hmp_le : m ≤ p := Nat.le_of_dvd hp' hmp 
+    obtain m_eq_p | m_lt_p := eq_or_lt_of_le hmp_le 
+    · apply m_eq_p 
+    · have contra : ¬m ∣ p := H m hm_left m_lt_p 
+      contradiction
