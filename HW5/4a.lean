@@ -11,37 +11,28 @@ import Library.Tactic.Cancel
 import Library.Tactic.Use
 
 example {n : ℤ} : 63 ∣ n ↔ 7 ∣ n ∧ 9 ∣ n := by
-  constructor
-  . intro hn
-    obtain ⟨k,hk⟩ := hn
-    constructor
-    . use (9*k)
+  constructor 
+  · intros h 
+    dsimp [(.∣.)] at * 
+    obtain ⟨c,hc⟩ := h 
+    constructor 
+    · use 9 * c 
       calc 
-        n = 63 * k := by rw[hk]
-        _ = 7 * (9 * k) := by ring
-    . use (7*k)
+        n = 63 * c := by rw [hc] 
+        _ = 7 * (9 * c) := by ring 
+    · use 7 * c 
       calc 
-        n = 63 * k := by rw[hk]
-        _ = 9 *(7*k) := by ring
-  . intro hn
-    obtain ⟨hk,hq⟩ := hn
-    obtain ⟨k,h7⟩ := hk
-    have hqq : 9 ∣ 7*k := by 
-      calc
-          9 ∣ n  := by exact hq
-          _  ∣ 7*k := by rw [h7]
-
-    obtain ⟨q,hkq⟩ := hqq 
-    have h1 : 9 ∣ k := by
-      use (4*q - 3* k)
-      calc
-        k = 28 * k - 27 * k := by ring
-        _ = 4* (7 * k) - 27 * k  := by ring
-        _ = 4 * (9 * q) - 27 * k := by rw[hkq]
-        _ = 9 * (4 * q - 3 * k) := by ring
-    obtain ⟨x,h2⟩ := h1
-    use x
-    calc
-      n = 7 * k := by exact h7
-      _ = 7 * (9 * x) := by rw[h2]
-      _ = 63 * x := by ring
+        n = 63 * c := by rw [hc] 
+        _ = 9 * (7 * c) := by ring 
+  · intros h 
+    dsimp [(.∣.)] at * 
+    obtain ⟨h1,h2⟩ := h 
+    obtain ⟨a,ha⟩ := h1 
+    obtain ⟨b,hb⟩ := h2 
+    use 4 * b - 3 * a 
+    calc 
+      n = 28 * n - 27 * n := by ring 
+      _ = 4 * 7 * n + (-3) * 9 * n := by ring 
+      _ = 4 * 7 * (n) + (-3) * 9 * (7 * a) := by rw [ha] 
+      _ = 4 * 7 * (9 * b) + (-3) * 9 * (7 * a) := by rw [hb] 
+      _ = 63 * (4 * b - 3 * a) := by ring 
