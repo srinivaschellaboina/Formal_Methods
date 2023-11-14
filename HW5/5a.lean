@@ -11,63 +11,40 @@ import Library.Tactic.Cancel
 import Library.Tactic.Use
 
 example : ∃! x : ℚ, ∀ a, a ≥ 1 → a ≤ 3 → (a - x) ^ 2 ≤ 1 := by
-  use 2
-  dsimp
-  constructor
-  intro a
-  intro h1
-  intro h2 
-  
-  have h5 : (a - 2) ^ 2 ≤ 1^2 := by 
-    apply sq_le_sq'
-    calc
-      -1 = 1 - 2 := by numbers
-      _ ≤ a - 2 := by rel[h1]
-    
-    calc
-      a - 2 =  a + (-2) := by ring 
-      _ ≤ 3 + (-2) := by rel[h2] 
-      _ = 1 := by numbers
-  
-  calc
-    (a - 2) ^ 2 ≤ 1^2 := by exact h5
-      _ = 1 := by numbers
-
-  intro y
-  intro h1 
-  have ha1 := h1 1
-  have ha11 : (1 - y) ^ 2 ≤ 1 := by
-    apply ha1
-    numbers
-    numbers
-
-  have ha3 := h1 3
-  have ha31: (3 - y) ^ 2 ≤ 1 := by
-    apply ha3
-    numbers
-    numbers
-
-  have h2 : (y - 2) ^ 2 ≤ 0^2 := by
+  use 2 
+  dsimp 
+  constructor 
+  · intros a ha1 ha3 
+    simp 
+    dsimp [abs] 
+    simp 
+    constructor 
+    · calc 
+        a ≤ 3 := ha3  
+        _ = 1 + 2 := by numbers 
+    · calc 
+        1 + a ≥ 1 + 1 := by rel [ha1] 
+        _ = 2 := by numbers 
+  · intros y h
+    have h1 : 1 ≥ 1 → 1 ≤ 3 → (1 - y) ^ 2 ≤ 1 := h 1 
+    have h1' : (1 - y) ^ 2 ≤ 1 := by 
+      apply h1 
+      simp 
+      simp 
+    have h3 : 3 ≥ 1 → 3 ≤ 3 → (3 - y) ^ 2 ≤ 1 := h 3 
+    have h3' : (3 - y) ^ 2 ≤ 1 := by 
+      apply h3 
+      simp 
+      simp 
+    have hAbove : (y - 2) ^ 2 ≤ 0 := 
     calc 
-      (y - 2) ^ 2 = ((1-y)^ 2 + (3 -y)^2  - 2) / 2 := by ring
-      _ ≤ (1 + 1 - 2) / 2 := by rel[ha11,ha31]
-      _ = 0 := by numbers
-      _ = 0 ^ 2 := by numbers
-  
-  apply ge_antisymm
-  . have h4 :  -0 ≤ y - 2 ∧ y - 2 ≤ 0 := by
-      apply abs_le_of_sq_le_sq' h2
-      numbers
-    obtain ⟨h5,h6⟩ := h4 
-    calc
-      2 = -0 + 2 := by numbers
-      _ ≤ y - 2 + 2 := by rel[h5]
-      _ = y := by addarith
-  . have h4 :  -0 ≤ y - 2 ∧ y - 2 ≤ 0 := by
-      apply abs_le_of_sq_le_sq' h2
-      numbers
-    obtain ⟨h5,h6⟩ := h4 
-    calc
-      y = y - 2 + 2 := by ring
-      _ ≤ 0 + 2 := by rel[h6]
-      _ = 2 := by addarith
+      (y - 2) ^ 2 = ((1 - y) ^ 2 + (3 - y) ^ 2 - 2) / 2 := by ring 
+      _ ≤ (1 + 1 - 2) / 2 := by rel [h1',h3'] 
+      _ = 0 := by numbers 
+    have hBelow : 0 ≤ (y - 2) ^ 2 := by extra 
+    have hy : (y - 2) ^ 2 = 0 := by apply le_antisymm hAbove hBelow 
+    simp at hy
+    calc 
+      y = y - 2 + 2 := by ring 
+      _ = 0 + 2 := by rw [hy] 
+      _ = 2 := by numbers
