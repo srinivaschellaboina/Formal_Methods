@@ -11,16 +11,12 @@ import Library.Tactic.Cancel
 import Library.Tactic.Use
 
 example : ∃! n : ℕ, ∀ a, n ≤ a := by
-  use 0
-  dsimp
-  constructor
-
-  . intro x
-    extra       
-
-  . intro x 
-    intro h1
-    have h2 := h1 0
-    apply ge_antisymm
-    extra
-    exact h2
+  use 0 
+  dsimp 
+  constructor 
+  · intros a 
+    simp 
+  · intros y h 
+    have h0 : y ≤ 0 := h 0 
+    simp at h0 
+    apply h0 
