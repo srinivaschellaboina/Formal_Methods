@@ -12,45 +12,38 @@ import Library.Tactic.Use
 
 example {k : ℕ} : k ^ 2 ≤ 6 ↔ k = 0 ∨ k = 1 ∨ k = 2 := by
   constructor 
-  . intro h1
-    have h2 := le_or_gt k 0
-    obtain h3|h4 := h2
-    . simp at h3 
-      left
-      apply h3
-    . have h3 := le_or_gt k 1
-      obtain h5|h6 := h3
-      . right
-        left 
-        addarith [h4,h5]
-      . have h3 := le_or_gt k 2
-        obtain h5|h7 := h3
-        . right
-          right
-          addarith[h5,h6]        
-        . have h7: k ≥ 3 := by addarith[h7]
-          have h8: k^2 > 6:= by
-            calc
-              k^2 = k * k := by ring
-              _ ≥ 3 *3 := by rel[h7]
-              _ = 9 := by numbers
-              _ > 6 := by ring
-          have h9: ¬(k^2 ≤ 6) := by 
-              rw [not_le]
-              addarith[h8]
-          contradiction
-  . intro h1
-    obtain h2 | h3 := h1
-    calc
-      k ^ 2 = 0 ^ 2 := by rw[h2]
-      _ = 0 := by numbers
-      _ ≤ 6 := by numbers
-    obtain h4 | h5 := h3
-    calc 
-       k ^ 2 = 1 ^ 2 := by rw[h4]
-      _ = 1 := by numbers
-      _ ≤ 6 := by numbers
-    calc
-      k ^ 2 = 2 ^ 2 := by rw[h5]
-      _ = 4 := by numbers
-      _ ≤ 6 := by numbers
+  · intros h 
+    have H1 := le_or_gt k 0
+    obtain H1 | H1 := H1 
+    · left 
+      simp at H1 
+      apply H1 
+    · right 
+      have H2 := le_or_gt k 1 
+      obtain H2 | H2 := H2 
+      · left 
+        have H3 : k ≥ 1 := by addarith [H1] 
+        apply le_antisymm H2 H3 
+      · right 
+        have H3 : k ≥ 2 := by addarith [H2] 
+        have H4 : ¬(k ≥ 3) := by 
+          intros H5 
+          have H6 : 3 * 2 ≥ 3 * k := 
+          calc 
+            3 * 2 = 6 := by ring 
+            _ ≥ k ^ 2 := by rel [h] 
+            _ = k * k := by ring 
+            _ ≥ 3 * k := by rel [H5] 
+          cancel 3 at H6 
+          have H7 : k = 2 := le_antisymm H6 H3 
+          addarith [H5,H7] 
+        simp at H4 
+        addarith [H3,H4] 
+  · intros h 
+    obtain h1 | h2 | h3 := h 
+    · rw [h1] 
+      numbers 
+    · rw [h2] 
+      numbers 
+    · rw [h3] 
+      numbers
